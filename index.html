@@ -1,0 +1,1697 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heru Nur Alimin — Java Developer</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #080b0f;
+        --bg2: #0d1117;
+        --bg3: #111820;
+        --surface: #141c26;
+        --border: #1e2d3d;
+        --accent: #00d4ff;
+        --accent2: #ff6b35;
+        --accent3: #7fff6e;
+        --text: #e8edf2;
+        --muted: #5a7a94;
+        --faint: #1a2535;
+        --font-display: "Syne", sans-serif;
+        --font-mono: "Space Mono", monospace;
+        --font-body: "DM Sans", sans-serif;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-body);
+        font-size: 16px;
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      /* ── NOISE OVERLAY ── */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.6;
+      }
+
+      /* ── CURSOR ── */
+      .cursor {
+        width: 10px;
+        height: 10px;
+        background: var(--accent);
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 10000;
+        transform: translate(-50%, -50%);
+        transition:
+          transform 0.1s,
+          width 0.3s,
+          height 0.3s,
+          background 0.3s;
+        mix-blend-mode: screen;
+      }
+      .cursor-ring {
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(0, 212, 255, 0.4);
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9998;
+        transform: translate(-50%, -50%);
+        transition:
+          transform 0.15s ease-out,
+          width 0.3s,
+          height 0.3s;
+      }
+
+      /* ── NAV ── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        padding: 20px 60px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(
+          to bottom,
+          rgba(8, 11, 15, 0.95),
+          transparent
+        );
+        backdrop-filter: blur(2px);
+      }
+      .nav-logo {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--accent);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .nav-links {
+        display: flex;
+        gap: 36px;
+        list-style: none;
+      }
+      .nav-links a {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted);
+        text-decoration: none;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--accent);
+      }
+
+      /* ── HERO ── */
+      #hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 120px 60px 80px;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-grid-bg {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0, 212, 255, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 212, 255, 0.04) 1px, transparent 1px);
+        background-size: 60px 60px;
+        mask-image: radial-gradient(
+          ellipse 80% 70% at 60% 50%,
+          black,
+          transparent
+        );
+      }
+      .hero-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        pointer-events: none;
+      }
+      .orb1 {
+        width: 600px;
+        height: 600px;
+        background: rgba(0, 212, 255, 0.07);
+        right: -100px;
+        top: -100px;
+      }
+      .orb2 {
+        width: 400px;
+        height: 400px;
+        background: rgba(255, 107, 53, 0.05);
+        right: 200px;
+        bottom: 0;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 900px;
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 32px;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.2s forwards;
+      }
+      .hero-tag::before {
+        content: "";
+        display: block;
+        width: 32px;
+        height: 1px;
+        background: var(--accent);
+      }
+
+      .hero-name {
+        font-family: var(--font-display);
+        font-size: clamp(56px, 8vw, 110px);
+        font-weight: 800;
+        line-height: 0.92;
+        letter-spacing: -0.03em;
+        margin-bottom: 24px;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.35s forwards;
+      }
+      .hero-name .line2 {
+        display: block;
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+        color: transparent;
+      }
+
+      .hero-title {
+        font-family: var(--font-mono);
+        font-size: 14px;
+        color: var(--muted);
+        letter-spacing: 0.1em;
+        margin-bottom: 32px;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.5s forwards;
+      }
+      .hero-title span {
+        color: var(--accent2);
+      }
+
+      .hero-desc {
+        font-size: 16px;
+        color: rgba(232, 237, 242, 0.7);
+        max-width: 520px;
+        line-height: 1.8;
+        margin-bottom: 48px;
+        font-weight: 300;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.65s forwards;
+      }
+
+      .hero-cta {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        opacity: 0;
+        animation: fadeUp 0.8s 0.8s forwards;
+      }
+      .btn-primary {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 14px 32px;
+        background: var(--accent);
+        color: var(--bg);
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 212, 255, 0.3);
+      }
+      .btn-outline {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 14px 32px;
+        background: transparent;
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        cursor: pointer;
+        text-decoration: none;
+        transition:
+          border-color 0.2s,
+          color 0.2s;
+      }
+      .btn-outline:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .hero-stats {
+        position: absolute;
+        right: 60px;
+        bottom: 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        opacity: 0;
+        animation: fadeLeft 0.8s 1s forwards;
+      }
+      .stat-item {
+        text-align: right;
+      }
+      .stat-num {
+        font-family: var(--font-display);
+        font-size: 42px;
+        font-weight: 800;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .stat-label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+
+      /* ── SCROLL INDICATOR ── */
+      .scroll-ind {
+        position: absolute;
+        bottom: 40px;
+        left: 60px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        opacity: 0;
+        animation: fadeUp 0.8s 1.2s forwards;
+      }
+      .scroll-line {
+        width: 48px;
+        height: 1px;
+        background: var(--border);
+        position: relative;
+        overflow: hidden;
+      }
+      .scroll-line::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--accent);
+        transform: translateX(-100%);
+        animation: scrollAnim 2s 1.5s infinite;
+      }
+
+      /* ── SECTIONS ── */
+      section {
+        padding: 120px 60px;
+      }
+      .section-label {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+      .section-label::after {
+        content: "";
+        flex: 1;
+        max-width: 60px;
+        height: 1px;
+        background: var(--accent);
+        opacity: 0.5;
+      }
+      .section-title {
+        font-family: var(--font-display);
+        font-size: clamp(36px, 5vw, 64px);
+        font-weight: 800;
+        line-height: 1;
+        letter-spacing: -0.03em;
+        margin-bottom: 64px;
+      }
+
+      /* ── ABOUT ── */
+      #about {
+        background: var(--bg2);
+      }
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: start;
+      }
+      .about-text p {
+        font-size: 17px;
+        color: rgba(232, 237, 242, 0.75);
+        line-height: 1.9;
+        font-weight: 300;
+        margin-bottom: 20px;
+      }
+      .about-text p strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+      .about-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        margin-top: 40px;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+      .info-key {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .info-val {
+        color: var(--text);
+        font-weight: 400;
+      }
+      .info-val a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .about-visual {
+        position: relative;
+      }
+      .code-window {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        font-family: var(--font-mono);
+      }
+      .code-header {
+        background: var(--faint);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .dot-r {
+        background: #ff5f56;
+      }
+      .dot-y {
+        background: #ffbd2e;
+      }
+      .dot-g {
+        background: #27c93f;
+      }
+      .code-filename {
+        font-size: 11px;
+        color: var(--muted);
+        margin-left: 8px;
+        letter-spacing: 0.05em;
+      }
+      .code-body {
+        padding: 24px 28px;
+        font-size: 13px;
+        line-height: 1.9;
+      }
+      .c-k {
+        color: #ff79c6;
+      }
+      .c-c {
+        color: #bd93f9;
+      }
+      .c-s {
+        color: #f1fa8c;
+      }
+      .c-v {
+        color: var(--accent);
+      }
+      .c-m {
+        color: var(--accent3);
+      }
+      .c-n {
+        color: var(--text);
+      }
+      .c-cm {
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      /* ── SKILLS ── */
+      #skills {
+        background: var(--bg);
+      }
+      .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2px;
+      }
+      .skill-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 32px;
+        transition:
+          background 0.3s,
+          border-color 0.3s,
+          transform 0.3s;
+        cursor: default;
+        position: relative;
+        overflow: hidden;
+      }
+      .skill-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), transparent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s;
+      }
+      .skill-card:hover {
+        background: var(--faint);
+        border-color: var(--accent);
+        transform: translateY(-4px);
+      }
+      .skill-card:hover::before {
+        transform: scaleX(1);
+      }
+      .skill-icon {
+        font-size: 28px;
+        margin-bottom: 16px;
+      }
+      .skill-name {
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .skill-desc {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+      .skill-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 16px;
+      }
+      .tag {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 4px 10px;
+        background: var(--faint);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        border-radius: 2px;
+      }
+
+      /* ── EXPERIENCE ── */
+      #experience {
+        background: var(--bg2);
+      }
+      .timeline {
+        position: relative;
+        padding-left: 40px;
+      }
+      .timeline::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 8px;
+        bottom: 0;
+        width: 1px;
+        background: linear-gradient(
+          to bottom,
+          var(--accent),
+          var(--border),
+          transparent
+        );
+      }
+      .timeline-item {
+        position: relative;
+        margin-bottom: 64px;
+        opacity: 0;
+        transform: translateX(-20px);
+        transition:
+          opacity 0.6s,
+          transform 0.6s;
+      }
+      .timeline-item.visible {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .timeline-dot {
+        position: absolute;
+        left: -44px;
+        top: 6px;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.15);
+      }
+      .timeline-meta {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .timeline-period {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--accent);
+        letter-spacing: 0.12em;
+        padding: 4px 12px;
+        border: 1px solid rgba(0, 212, 255, 0.3);
+        border-radius: 2px;
+      }
+      .timeline-company {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+      .timeline-role {
+        font-family: var(--font-display);
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: -0.02em;
+      }
+      .timeline-location {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 20px;
+      }
+      .timeline-achievements {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .ach-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        font-size: 14px;
+        color: rgba(232, 237, 242, 0.7);
+        line-height: 1.7;
+        font-weight: 300;
+      }
+      .ach-bullet {
+        color: var(--accent2);
+        font-family: var(--font-mono);
+        font-size: 12px;
+        margin-top: 4px;
+        flex-shrink: 0;
+      }
+
+      /* ── PROJECTS ── */
+      #projects {
+        background: var(--bg);
+      }
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+      }
+      .project-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 36px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          border-color 0.3s,
+          transform 0.3s;
+        cursor: default;
+      }
+      .project-card:hover {
+        border-color: var(--accent2);
+        transform: translateY(-6px);
+      }
+      .project-card:hover .project-num {
+        color: var(--accent2);
+      }
+      .project-num {
+        font-family: var(--font-display);
+        font-size: 72px;
+        font-weight: 800;
+        color: var(--faint);
+        line-height: 1;
+        margin-bottom: -8px;
+        transition: color 0.3s;
+        letter-spacing: -0.04em;
+      }
+      .project-title {
+        font-family: var(--font-display);
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: -0.02em;
+      }
+      .project-desc {
+        font-size: 14px;
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 20px;
+        font-weight: 300;
+      }
+      .project-stack {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .stack-tag {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 3px 10px;
+        border-radius: 2px;
+        letter-spacing: 0.08em;
+      }
+      .stack-tag.java {
+        background: rgba(255, 107, 53, 0.15);
+        color: var(--accent2);
+        border: 1px solid rgba(255, 107, 53, 0.25);
+      }
+      .stack-tag.infra {
+        background: rgba(0, 212, 255, 0.1);
+        color: var(--accent);
+        border: 1px solid rgba(0, 212, 255, 0.2);
+      }
+      .stack-tag.db {
+        background: rgba(127, 255, 110, 0.1);
+        color: var(--accent3);
+        border: 1px solid rgba(127, 255, 110, 0.2);
+      }
+
+      /* ── CERTIFICATIONS ── */
+      #certifications {
+        background: var(--bg2);
+      }
+      .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2px;
+      }
+      .cert-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 32px;
+        transition: border-color 0.3s;
+      }
+      .cert-card:hover {
+        border-color: var(--accent3);
+      }
+      .cert-year {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--accent3);
+        letter-spacing: 0.15em;
+        margin-bottom: 12px;
+      }
+      .cert-name {
+        font-family: var(--font-display);
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        line-height: 1.3;
+      }
+      .cert-issuer {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+
+      /* ── CONTACT ── */
+      #contact {
+        background: var(--bg);
+        position: relative;
+        overflow: hidden;
+      }
+      .contact-bg-text {
+        position: absolute;
+        bottom: -40px;
+        right: -20px;
+        font-family: var(--font-display);
+        font-size: clamp(100px, 16vw, 220px);
+        font-weight: 800;
+        color: rgba(255, 255, 255, 0.02);
+        letter-spacing: -0.05em;
+        pointer-events: none;
+        user-select: none;
+        white-space: nowrap;
+      }
+      .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        position: relative;
+        z-index: 2;
+      }
+      .contact-left h2 {
+        font-family: var(--font-display);
+        font-size: clamp(40px, 5vw, 70px);
+        font-weight: 800;
+        line-height: 0.95;
+        letter-spacing: -0.04em;
+        margin-bottom: 24px;
+      }
+      .contact-left h2 em {
+        font-style: normal;
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+        color: transparent;
+      }
+      .contact-left p {
+        font-size: 16px;
+        color: rgba(232, 237, 242, 0.6);
+        line-height: 1.8;
+        font-weight: 300;
+        margin-bottom: 40px;
+        max-width: 380px;
+      }
+      .contact-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .contact-link {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--text);
+        text-decoration: none;
+        padding: 16px 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 2px;
+        transition:
+          border-color 0.2s,
+          color 0.2s,
+          transform 0.2s;
+      }
+      .contact-link:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        transform: translateX(6px);
+      }
+      .contact-link-icon {
+        font-size: 16px;
+      }
+
+      .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .form-group label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--muted);
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+      }
+      .form-group input,
+      .form-group textarea {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-family: var(--font-body);
+        font-size: 14px;
+        padding: 14px 18px;
+        border-radius: 2px;
+        outline: none;
+        resize: none;
+        transition: border-color 0.2s;
+      }
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-color: var(--accent);
+      }
+      .form-group input::placeholder,
+      .form-group textarea::placeholder {
+        color: var(--muted);
+      }
+      .form-group textarea {
+        min-height: 120px;
+      }
+      .btn-send {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 16px 32px;
+        background: var(--accent2);
+        color: #fff;
+        border: none;
+        border-radius: 2px;
+        cursor: pointer;
+        align-self: flex-start;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .btn-send:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(255, 107, 53, 0.35);
+      }
+
+      /* ── FOOTER ── */
+      footer {
+        padding: 32px 60px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--bg2);
+      }
+      .footer-text {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+      }
+      .footer-text span {
+        color: var(--accent2);
+      }
+
+      /* ── ANIMATIONS ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeLeft {
+        from {
+          opacity: 0;
+          transform: translateX(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes scrollAnim {
+        from {
+          transform: translateX(-100%);
+        }
+        to {
+          transform: translateX(100%);
+        }
+      }
+
+      /* ── RESPONSIVE ── */
+      @media (max-width: 900px) {
+        nav {
+          padding: 20px 24px;
+        }
+        .nav-links {
+          display: none;
+        }
+        section,
+        #hero {
+          padding: 80px 24px;
+        }
+        .about-grid,
+        .contact-grid {
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+        .projects-grid,
+        .cert-grid {
+          grid-template-columns: 1fr;
+        }
+        .skills-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-stats {
+          position: static;
+          flex-direction: row;
+          gap: 32px;
+          margin-top: 48px;
+        }
+        .stat-item {
+          text-align: left;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+        footer {
+          flex-direction: column;
+          gap: 12px;
+          text-align: center;
+        }
+        .hero-name {
+          font-size: 52px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAV -->
+    <nav>
+      <div class="nav-logo">HNA.dev</div>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-grid-bg"></div>
+      <div class="hero-orb orb1"></div>
+      <div class="hero-orb orb2"></div>
+
+      <div class="hero-content">
+        <div class="hero-tag">Available for opportunities</div>
+        <h1 class="hero-name">
+          Heru Nur<br />
+          <span class="line2">Alimin</span>
+        </h1>
+        <div class="hero-title">
+          Java Developer · <span>Spring Boot</span> · Microservices
+        </div>
+        <p class="hero-desc">
+          Results-driven software engineer with
+          <strong>6+ years</strong> building robust, scalable backend systems.
+          Specialized in microservices architecture, API development, and
+          enterprise-grade solutions for the telecommunications industry.
+        </p>
+        <div class="hero-cta">
+          <a href="#projects" class="btn-primary">View My Work</a>
+          <a href="#contact" class="btn-outline">Get in Touch</a>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Years Exp.</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">12+</div>
+          <div class="stat-label">Tech Skills</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Companies</div>
+        </div>
+      </div>
+
+      <div class="scroll-ind">
+        <div class="scroll-line"></div>
+        SCROLL TO EXPLORE
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div class="section-label">01 — About Me</div>
+      <div class="about-grid">
+        <div class="about-text">
+          <div class="section-title">
+            Crafting Scalable<br />Backend Systems
+          </div>
+          <p>
+            I am a <strong>results-driven Java Developer</strong> with a solid
+            foundation in Core Java, Spring Framework, and microservices
+            architecture. For over six years, I have been building and
+            maintaining robust front-office systems in the telecommunications
+            industry.
+          </p>
+          <p>
+            My expertise spans full-stack development with a sharp focus on
+            <strong>Microservice Architecture</strong>, API integration, and
+            enterprise data solutions. I thrive in cross-functional SDLC teams,
+            delivering high-quality applications with clean, efficient code.
+          </p>
+          <div class="about-info">
+            <div class="info-row">
+              <span class="info-key">Location</span>
+              <span class="info-val">Pekalongan, Indonesia</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">Email</span>
+              <span class="info-val"
+                ><a href="mailto:herunuralimin22@gmail.com"
+                  >herunuralimin22@gmail.com</a
+                ></span
+              >
+            </div>
+            <div class="info-row">
+              <span class="info-key">Phone</span>
+              <span class="info-val">+62 821-35755110</span>
+            </div>
+            <div class="info-row">
+              <span class="info-key">Education</span>
+              <span class="info-val"
+                >D3 Informatics — Politeknik Negeri Bandung</span
+              >
+            </div>
+            <div class="info-row">
+              <span class="info-key">Status</span>
+              <span class="info-val" style="color: var(--accent3)"
+                >● Open to Work</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="about-visual">
+          <div class="code-window">
+            <div class="code-header">
+              <div class="dot dot-r"></div>
+              <div class="dot dot-y"></div>
+              <div class="dot dot-g"></div>
+              <span class="code-filename">Developer.java</span>
+            </div>
+            <div class="code-body">
+              <span class="c-k">@Component</span><br />
+              <span class="c-k">public class</span>
+              <span class="c-c">Developer</span> {<br /><br />
+              &nbsp;&nbsp;<span class="c-k">private final</span>
+              <span class="c-c">String</span> <span class="c-v">name</span> =
+              <span class="c-s">"Heru Nur Alimin"</span>;<br />
+              &nbsp;&nbsp;<span class="c-k">private final</span>
+              <span class="c-c">int</span> <span class="c-v">yearsExp</span> =
+              <span class="c-m">6</span>;<br /><br />
+              &nbsp;&nbsp;<span class="c-k">private</span>
+              <span class="c-c">List</span>&lt;<span class="c-c">String</span
+              >&gt; <span class="c-v">stack</span> =
+              <span class="c-k">List</span>.of(<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-s">"Java SE"</span>,
+              <span class="c-s">"Spring Boot"</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-s">"Microservices"</span>,
+              <span class="c-s">"Docker"</span>,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-s">"PostgreSQL"</span>,
+              <span class="c-s">"REST APIs"</span><br />
+              &nbsp;&nbsp;);<br /><br />
+              &nbsp;&nbsp;<span class="c-cm">// Core strengths</span><br />
+              &nbsp;&nbsp;<span class="c-k">private</span>
+              <span class="c-c">String[]</span>
+              <span class="c-v">strengths</span> = {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-s">"Problem Solving"</span
+              >,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-s"
+                >"Team Collaboration"</span
+              >,<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-s"
+                >"Coding Efficiency"</span
+              ><br />
+              &nbsp;&nbsp;};<br /><br />
+              &nbsp;&nbsp;<span class="c-k">public</span>
+              <span class="c-c">String</span>
+              <span class="c-m">getStatus</span>() {<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;<span class="c-k">return</span>
+              <span class="c-s">"Open to opportunities"</span>;<br />
+              &nbsp;&nbsp;}<br />
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="section-label">02 — Tech Skills</div>
+      <div class="section-title">My Tech Stack</div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-icon">☕</div>
+          <div class="skill-name">Core Java</div>
+          <div class="skill-desc">
+            Deep expertise in Java SE with OOP principles, design patterns, and
+            enterprise-grade application development.
+          </div>
+          <div class="skill-tags">
+            <span class="tag">Java SE</span>
+            <span class="tag">OOP</span>
+            <span class="tag">Design Patterns</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🍃</div>
+          <div class="skill-name">Spring Ecosystem</div>
+          <div class="skill-desc">
+            Building production-ready applications with Spring Boot, Spring MVC,
+            and Hibernate ORM.
+          </div>
+          <div class="skill-tags">
+            <span class="tag">Spring Boot</span>
+            <span class="tag">Hibernate</span>
+            <span class="tag">Spring MVC</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🔗</div>
+          <div class="skill-name">Microservices & API</div>
+          <div class="skill-desc">
+            Architecting scalable microservices and designing RESTful APIs for
+            enterprise integrations.
+          </div>
+          <div class="skill-tags">
+            <span class="tag">Microservices</span>
+            <span class="tag">RESTful APIs</span>
+            <span class="tag">Docker</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🗄️</div>
+          <div class="skill-name">Databases</div>
+          <div class="skill-desc">
+            Proficient in relational databases for financial and enterprise data
+            management.
+          </div>
+          <div class="skill-tags">
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">Oracle</span>
+            <span class="tag">MySQL</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">⚙️</div>
+          <div class="skill-name">ETL & Data</div>
+          <div class="skill-desc">
+            Data pipeline development with ETL processes and Talend for
+            enterprise data integration.
+          </div>
+          <div class="skill-tags">
+            <span class="tag">ETL</span>
+            <span class="tag">Talend</span>
+            <span class="tag">XML/CSV/JSON</span>
+          </div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-icon">🛠️</div>
+          <div class="skill-name">DevOps & Tools</div>
+          <div class="skill-desc">
+            Version control and containerization for efficient development and
+            deployment workflows.
+          </div>
+          <div class="skill-tags">
+            <span class="tag">Git</span>
+            <span class="tag">Docker</span>
+            <span class="tag">Linux</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+      <div class="section-label">03 — Experience</div>
+      <div class="section-title">Work History</div>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-meta">
+            <span class="timeline-period">July 2018 — Present</span>
+            <span class="timeline-company">PT. Cybertrend Intrabuana</span>
+          </div>
+          <div class="timeline-role">Java Developer</div>
+          <div class="timeline-location">📍 Jakarta, Indonesia</div>
+          <div class="timeline-achievements">
+            <div class="ach-item">
+              <span class="ach-bullet">▸</span>Spearheaded billing printing
+              applications for <strong>IM3 Indosat Postpaid</strong>,
+              streamlining the billing process and enhancing customer
+              experience.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet">▸</span>Developed a dynamic invoice
+              portal with configuration options, improving operational
+              efficiency across the organization.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet">▸</span>Designed billing reports in
+              multiple formats (PDF, CSV, XML, JSON) for comprehensive financial
+              tracking and analysis.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet">▸</span>Built robust APIs for
+              <strong>E-Stamp integration with Peruri</strong>, enabling
+              seamless digital stamping.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet">▸</span>Led the development of
+              <strong>3ID Billing</strong> using microservices architecture,
+              ensuring scalability and resilience.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet">▸</span>Integrated API for the
+              <strong>BPJS Kesehatan Portal</strong>, streamlining healthcare
+              data management.
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background: var(--accent2)"></div>
+          <div class="timeline-meta">
+            <span
+              class="timeline-period"
+              style="
+                color: var(--accent2);
+                border-color: rgba(255, 107, 53, 0.3);
+              "
+              >March 2018 — July 2018</span
+            >
+            <span class="timeline-company">PT. Mitra Informatika</span>
+          </div>
+          <div class="timeline-role">Java Developer</div>
+          <div class="timeline-location">📍 Jakarta, Indonesia</div>
+          <div class="timeline-achievements">
+            <div class="ach-item">
+              <span class="ach-bullet" style="color: var(--accent2)">▸</span
+              >Retrieved and processed data from servers in multiple formats
+              (XML, CSV, JSON) for comprehensive data coverage.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet" style="color: var(--accent2)">▸</span
+              >Structured and processed extracted data for seamless database
+              integration, enhancing data usability.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet" style="color: var(--accent2)">▸</span
+              >Developed intuitive dashboards for real-time data analysis and
+              decision-making support.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet" style="color: var(--accent2)">▸</span
+              >Created efficient scripts for data conversion between formats,
+              ensuring consistency across systems.
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot" style="background: var(--accent3)"></div>
+          <div class="timeline-meta">
+            <span
+              class="timeline-period"
+              style="
+                color: var(--accent3);
+                border-color: rgba(127, 255, 110, 0.3);
+              "
+              >September 2017 — February 2018</span
+            >
+            <span class="timeline-company">PT. Teknologi Kode Indonesia</span>
+          </div>
+          <div class="timeline-role">Java Engineer</div>
+          <div class="timeline-location">📍 Yogyakarta, Indonesia</div>
+          <div class="timeline-achievements">
+            <div class="ach-item">
+              <span class="ach-bullet" style="color: var(--accent3)">▸</span
+              >Developed innovative parking management applications for malls
+              and apartments.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet" style="color: var(--accent3)">▸</span
+              >Implemented complex fee calculation logic for accurate billing
+              and automated receipt generation.
+            </div>
+            <div class="ach-item">
+              <span class="ach-bullet" style="color: var(--accent3)">▸</span
+              >Produced daily and monthly operational reports with valuable
+              parking insights.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="section-label">04 — Projects</div>
+      <div class="section-title">Key Projects</div>
+      <div class="projects-grid">
+        <div class="project-card">
+          <div class="project-num">01</div>
+          <div class="project-title">MyIM3 Billing Printing</div>
+          <div class="project-desc">
+            Enterprise-grade billing microservice for IM3 Indosat Postpaid.
+            Handles invoice generation, PDF/CSV/XML reporting, and E-Stamp
+            integration with Peruri for digital compliance.
+          </div>
+          <div class="project-stack">
+            <span class="stack-tag java">Spring Boot</span>
+            <span class="stack-tag java">Microservices</span>
+            <span class="stack-tag db">Oracle</span>
+            <span class="stack-tag infra">Docker</span>
+            <span class="stack-tag infra">REST API</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-num">02</div>
+          <div class="project-title">BPJS Kesehatan</div>
+          <div class="project-desc">
+            Healthcare data management API integration for BPJS Kesehatan
+            portal. Streamlines data flow between healthcare systems and the
+            enterprise billing platform.
+          </div>
+          <div class="project-stack">
+            <span class="stack-tag java">Java SE</span>
+            <span class="stack-tag infra">REST API</span>
+            <span class="stack-tag db">PostgreSQL</span>
+            <span class="stack-tag java">Spring Boot</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-num">03</div>
+          <div class="project-title">Parking Management System</div>
+          <div class="project-desc">
+            Full-featured parking management application for malls and
+            apartments. Features dynamic fee calculation, automated receipt
+            generation, and daily/monthly reporting.
+          </div>
+          <div class="project-stack">
+            <span class="stack-tag java">Java SE</span>
+            <span class="stack-tag db">MySQL</span>
+            <span class="stack-tag java">Hibernate</span>
+            <span class="stack-tag infra">Git</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-num">04</div>
+          <div class="project-title">Enterprise ETL Pipeline</div>
+          <div class="project-desc">
+            Multi-format data retrieval and processing pipeline. Extracts data
+            from servers in XML, CSV, and JSON formats, structures it for
+            database integration, and exposes it via REST.
+          </div>
+          <div class="project-stack">
+            <span class="stack-tag java">Talend</span>
+            <span class="stack-tag infra">ETL</span>
+            <span class="stack-tag db">PostgreSQL</span>
+            <span class="stack-tag infra">REST API</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-num">05</div>
+          <div class="project-title">Invoice Billing Printing</div>
+          <div class="project-desc">
+            Dynamic web portal for generating and managing invoices with
+            configurable templates. Supports multiple output formats and
+            role-based access for enterprise users.
+          </div>
+          <div class="project-stack">
+            <span class="stack-tag java">Spring Boot</span>
+            <span class="stack-tag java">Hibernate</span>
+            <span class="stack-tag db">Oracle</span>
+            <span class="stack-tag infra">Docker</span>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-num">06</div>
+          <div class="project-title">Analytics Dashboard</div>
+          <div class="project-desc">
+            Real-time data analytics dashboard visualizing structured enterprise
+            data. Provides instant decision-making support with
+            cross-application data sharing via JSON APIs.
+          </div>
+          <div class="project-stack">
+            <span class="stack-tag java">Spring MVC</span>
+            <span class="stack-tag infra">REST API</span>
+            <span class="stack-tag db">MySQL</span>
+            <span class="stack-tag java">Java SE</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CERTIFICATIONS -->
+    <section id="certifications">
+      <div class="section-label">05 — Credentials</div>
+      <div class="section-title">Certifications</div>
+      <div class="cert-grid">
+        <div class="cert-card">
+          <div class="cert-year">2023</div>
+          <div class="cert-name">Google Cloud Professional Data Engineer</div>
+          <div class="cert-issuer">Udemy</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2020</div>
+          <div class="cert-name">
+            Certified International Data Development Fundamentals
+          </div>
+          <div class="cert-issuer">Pasas Institute</div>
+        </div>
+        <div class="cert-card">
+          <div class="cert-year">2019</div>
+          <div class="cert-name">WEB Application Developer Associate</div>
+          <div class="cert-issuer">InformIT</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="contact-bg-text">CONTACT</div>
+      <div class="section-label">06 — Contact</div>
+      <div class="contact-grid">
+        <div class="contact-left">
+          <h2>Let's Build<br /><em>Something</em><br />Together.</h2>
+          <p>
+            Open to new opportunities, collaborations, and interesting backend
+            challenges. Reach out and let's talk.
+          </p>
+          <div class="contact-links">
+            <a href="mailto:herunuralimin22@gmail.com" class="contact-link">
+              <span class="contact-link-icon">✉️</span>
+              herunuralimin22@gmail.com
+            </a>
+            <a href="tel:+6282135755110" class="contact-link">
+              <span class="contact-link-icon">📱</span>
+              +62 821-35755110
+            </a>
+            <a href="#" class="contact-link">
+              <span class="contact-link-icon">📍</span>
+              Pekalongan, Indonesia
+            </a>
+          </div>
+        </div>
+        <div class="contact-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Your Name</label>
+              <input type="text" placeholder="John Doe" />
+            </div>
+            <div class="form-group">
+              <label>Your Email</label>
+              <input type="email" placeholder="john@company.com" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Subject</label>
+            <input
+              type="text"
+              placeholder="Project Inquiry / Job Opportunity"
+            />
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea
+              placeholder="Tell me about your project or opportunity..."
+            ></textarea>
+          </div>
+          <button class="btn-send" onclick="handleSend()">
+            Send Message →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-text">
+        © 2024 Heru Nur Alimin — <span>Built with passion</span>
+      </div>
+      <div class="footer-text">
+        Java Developer · Spring Boot · Microservices
+      </div>
+    </footer>
+
+    <script>
+      // Custom cursor
+      const cursor = document.getElementById("cursor");
+      const ring = document.getElementById("cursorRing");
+      let mx = 0,
+        my = 0,
+        rx = 0,
+        ry = 0;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+      });
+      function animCursor() {
+        cursor.style.left = mx + "px";
+        cursor.style.top = my + "px";
+        rx += (mx - rx) * 0.12;
+        ry += (my - ry) * 0.12;
+        ring.style.left = rx + "px";
+        ring.style.top = ry + "px";
+        requestAnimationFrame(animCursor);
+      }
+      animCursor();
+      document
+        .querySelectorAll("a, button, .skill-card, .project-card")
+        .forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            cursor.style.width = "20px";
+            cursor.style.height = "20px";
+            ring.style.width = "60px";
+            ring.style.height = "60px";
+          });
+          el.addEventListener("mouseleave", () => {
+            cursor.style.width = "10px";
+            cursor.style.height = "10px";
+            ring.style.width = "36px";
+            ring.style.height = "36px";
+          });
+        });
+
+      // Scroll reveal
+      const items = document.querySelectorAll(".timeline-item");
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e, i) => {
+            if (e.isIntersecting) {
+              setTimeout(() => e.target.classList.add("visible"), i * 150);
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
+      items.forEach((el) => obs.observe(el));
+
+      // Active nav
+      const sections = document.querySelectorAll("section[id]");
+      const navLinks = document.querySelectorAll(".nav-links a");
+      window.addEventListener("scroll", () => {
+        let current = "";
+        sections.forEach((s) => {
+          if (window.scrollY >= s.offsetTop - 120) current = s.id;
+        });
+        navLinks.forEach((a) => {
+          a.style.color =
+            a.getAttribute("href") === "#" + current ? "var(--accent)" : "";
+        });
+      });
+
+      // Contact form
+      function handleSend() {
+        const btn = document.querySelector(".btn-send");
+        btn.textContent = "Sending...";
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = "Message Sent ✓";
+          btn.style.background = "var(--accent3)";
+          btn.style.color = "var(--bg)";
+          setTimeout(() => {
+            btn.textContent = "Send Message →";
+            btn.disabled = false;
+            btn.style.background = "";
+            btn.style.color = "";
+          }, 3000);
+        }, 1200);
+      }
+    </script>
+  </body>
+</html>
